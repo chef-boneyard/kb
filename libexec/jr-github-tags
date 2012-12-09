@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# Usage: jr github-tags <user> <repo>
+
+require 'chef/rest'
+
+user, repo, splat = ARGV
+url = "https://api.github.com/repos/#{user}/#{repo}/git/refs/tags"
+
+EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
+  Net::HTTPFatalError, Net::HTTPServerException ]
+
+begin
+  rest = Chef::REST.new(url, nil, nil, {})
+  puts rest.get_rest(url, false, {}).map { |t| t["ref"].split("/").last }.sort
+rescue *EXCEPTIONS => e
+  abort "Could not access #{url} (#{e.message})"
+end

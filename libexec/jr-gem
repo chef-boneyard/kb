@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: jr gem command [arguments...] [options...]
+# Summary: Invokes gem command on the embedded Ruby
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+exec "$(jr-ruby-binpath)/gem" $*

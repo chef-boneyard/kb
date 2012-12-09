@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Usage: jr ruby [switches] [--] [programfile] [arguments]
+# Summary: Inovkes ruby command on the embedded Ruby
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+ruby_binpath="$(jr-ruby-binpath)"
+export PATH="$ruby_binpath:$PATH"
+exec "$ruby_binpath/ruby" $*
