@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-require 'chef/rest'
-require 'chef/platform'
-require 'fileutils'
-require 'tempfile'
+require "chef/rest"
+require "chef/platform"
+require "fileutils"
+require "tempfile"
 
 EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
   Net::HTTPFatalError, Net::HTTPServerException ]
@@ -12,7 +12,7 @@ class JrInstaller
   def initialize(opts = {})
     @url = opts[:url] || calculate_url(opts[:tag])
     @root = opts[:root] || "/opt/jr"
-    @tarfile = Tempfile.new('jamie.tar.gz')
+    @tarfile = Tempfile.new("jamie.tar.gz")
   end
 
   def run!
@@ -47,13 +47,13 @@ class JrInstaller
     tags = rest.get_rest(t_url, false, {}).map { |t| t["ref"].split("/").last }
     tags.sort.select { |t| t =~ /^v[0-9]/ }.last
   rescue *EXCEPTIONS => e
-    return "master" if e.message == '404 "Not Found"'
+    return "master" if e.message == %{404 "Not Found"}
     abort "Could not access #{t_url} (#{e.message})"
   end
 end
 
 if __FILE__ == $0
   JrInstaller.new({
-    :url => ENV['JR_URL'], :tag => ENV['JR_TAG'], :root => ENV['JR_ROOT']
+    :url => ENV["JR_URL"], :tag => ENV["JR_TAG"], :root => ENV["JR_ROOT"]
   }).run!
 end
