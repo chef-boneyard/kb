@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# Usage: jr install <plugin>[ <plugin> ...]
+# Summary: Installs a plugin
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+log()   { echo "-----> $*" ; }
+warn()  { echo ">>>>>> $*" >&2 ; }
+
+install() {
+  local plugin="$1"
+  local plugin_path="$_JR_ROOT/plugins/$plugin"
+
+  [ -d "$plugin_path" ] && log "$plugin plugin already installed" && return 0
+
+  local tar="/tmp/$plugin-$$.tar.gz"
+  local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1)"
+  [ -z "$tag" ] && tag="master"
+  local url="https://github.com/jamie-ci/jr-${plugin}/archive/${tag}.tar.gz"
+
+  mkdir -p "$(dirname $plugin_path)"
+
+  ( jr-download "$url" "$tar" && \
+    mkdir -p "$plugin_path" && \
+    (cd "$plugin_path" ; gunzip -c "$tar" | tar xf - --strip-components=1) && \
+    rm -f "$tar" && \
+    log "Plugin $plugin installed"
+  ) || return 1
+
+  if [ -f "$plugin_path/install.sh" ] ; then
+    log "Running install.sh for $plugin plugin"
+    "$plugin_path/install.sh"
+  fi
+}
+
+ecode=0
+while [ -n "$1" ] ; do
+  if ! install "$1" ; then
+    warn "Plugin $1 installation failed"
+    ecode=1
+  fi
+  shift
+done
+
+exit $ecode

@@ -6,4 +6,4 @@ set -e
 
 url="$1"
 file="$2"
-jr-ruby -S jr-ruby-download "$url" "$file"
+exec jr-ruby -S jr-ruby-download "$url" "$file"

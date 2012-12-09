@@ -13,5 +13,9 @@ begin
   rest = Chef::REST.new(url, nil, nil, {})
   puts rest.get_rest(url, false, {}).map { |t| t["ref"].split("/").last }.sort
 rescue *EXCEPTIONS => e
-  abort "Could not access #{url} (#{e.message})"
+  if e.message == %{404 "Not Found"}
+    puts "master"
+  else
+    abort "Could not access #{url} (#{e.message})"
+  end
 end

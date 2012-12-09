@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Usage: jr install <plugin>
+# Summary: Lists installed plugins
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+plugin_path="$_JR_ROOT/plugins"
+
+for path in "$plugin_path/"*; do
+  if [ -d "$path" ]; then
+    echo "${path##*/}"
+  fi
+done
