@@ -1,0 +1,59 @@
+# -*- encoding: utf-8 -*-
+
+require 'chef/rest'
+require 'chef/platform'
+require 'fileutils'
+require 'tempfile'
+
+EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
+  Net::HTTPFatalError, Net::HTTPServerException ]
+
+class JrInstaller
+  def initialize(opts = {})
+    @url = opts[:url] || calculate_url(opts[:tag])
+    @root = opts[:root] || "/opt/jr"
+    @tarfile = Tempfile.new('jamie.tar.gz')
+  end
+
+  def run!
+    download
+    install
+  end
+
+  private
+
+  def download
+    rest = Chef::REST.new(@url, nil, nil, {})
+    raw_file = rest.streaming_request(rest.create_url(@url), {})
+    FileUtils.cp raw_file.path, @tarfile.path
+    raw_file.close!
+  rescue *EXCEPTIONS => e
+    abort "Could not download from #{@url} (#{e.message})"
+  end
+
+  def install
+    FileUtils.mkdir_p @root
+    `cd #{@root} && gunzip -c #{@tarfile.path} | tar xf - --strip-components=1`
+    @tarfile.unlink
+  end
+
+  def calculate_url(tag)
+    "https://github.com/jamie-ci/jr/archive/#{tag || latest_tag}.tar.gz"
+  end
+
+  def latest_tag
+    t_url = "https://api.github.com/repos/jamie-ci/jr/git/refs/tags"
+    rest = Chef::REST.new(t_url, nil, nil, {})
+    tags = rest.get_rest(t_url, false, {}).map { |t| t["ref"].split("/").last }
+    tags.sort.select { |t| t =~ /^v[0-9]/ }.last
+  rescue *EXCEPTIONS => e
+    return "master" if e.message == '404 "Not Found"'
+    abort "Could not access #{t_url} (#{e.message})"
+  end
+end
+
+if __FILE__ == $0
+  JrInstaller.new({
+    :url => ENV['JR_URL'], :tag => ENV['JR_TAG'], :root => ENV['JR_ROOT']
+  }).run!
+end
