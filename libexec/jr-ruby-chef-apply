@@ -24,7 +24,7 @@ require 'chef/resources'
 require 'tempfile'
 
 recipe_file = if ARGV.size > 0
-  ARGV.first
+  File.expand_path(ARGV.first)
 else
   @tempfile = Tempfile.new("recipe")
   @tempfile.write(ARGF.read)
@@ -32,7 +32,6 @@ else
   @tempfile.path
 end
 
-recipe_file = File.expand_path(recipe_file)
 abort "Recipe file #{recipe_file} not found" unless File.exist?(recipe_file)
 
 class Chef::Client
