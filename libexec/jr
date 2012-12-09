@@ -21,6 +21,10 @@ abs_dirname() {
 
 libexec_path="$(abs_dirname "$0")"
 export _JR_ROOT="$(abs_dirname "$libexec_path")"
+
+for plugin_bin in "${_JR_ROOT}/plugins/"*/bin; do
+  libexec_path="${libexec_path}:${plugin_bin}"
+done
 export PATH="${libexec_path}:$PATH"
 
 command="$1"
