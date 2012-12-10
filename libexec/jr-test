@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Usage: jr test
+# Summary: Runs all test suites
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+for plugin in $(jr-list) ; do
+  echo "-----> Running $plugin test suite"
+  jr-$plugin
+done
