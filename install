@@ -16,13 +16,23 @@ class JrInstaller
   end
 
   def run!
-    download
-    install
+    if File.exists?(File.join(@root, "bin/jr"))
+      log "Detected previous jr installation, skipping install"
+    else
+      download
+      install
+      log "jr installed!"
+    end
   end
 
   private
 
+  def log(msg)
+    puts "-----> #{msg}"
+  end
+
   def download
+    log "Downloading jr from #{@url}"
     rest = Chef::REST.new(@url, nil, nil, {})
     raw_file = rest.streaming_request(rest.create_url(@url), {})
     FileUtils.cp raw_file.path, @tarfile.path
@@ -32,6 +42,7 @@ class JrInstaller
   end
 
   def install
+    log "Installing jr to #{@root}"
     FileUtils.mkdir_p @root
     `cd #{@root} && gunzip -c #{@tarfile.path} | tar xf - --strip-components=1`
     @tarfile.unlink
