@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Usage: jr decode
+# Summary: Decodes Base64 content on stdin
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
