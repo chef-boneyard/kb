@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: jr md5 <file>
+# Summary: Returns an MD5 digest of a file
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+file="$1"
+
+if [ ! -f "$file" ] ; then
+  echo "File $file does not exist" >&2
+  exit 1
+fi
+
+"$(jr-ruby-binpath)/ruby" -rdigest -e "puts Digest::MD5.hexdigest(IO.read('$file'))"
