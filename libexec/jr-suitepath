@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: jr suitepath <plugin>
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+suite="$1"
+suitepath="$_JR_ROOT/suites/$suite"
+
+if [ ! -d "$suitepath" ] ; then
+  echo "Suite directory $suitepath does not exist" >&2
+  exit 1
+fi
+
+echo $suitepath
