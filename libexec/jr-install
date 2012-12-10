@@ -4,14 +4,18 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-log()   { echo "-----> $*" ; }
-warn()  { echo ">>>>>> $*" >&2 ; }
+log_heading() { echo "-----> $*" ; }
+log_detail()  { echo "       $*" ; }
+warn()        { echo ">>>>>> $*" >&2 ; }
 
 install() {
   local plugin="$1"
   local plugin_path="$_JR_ROOT/plugins/$plugin"
 
-  [ -d "$plugin_path" ] && log "$plugin plugin already installed" && return 0
+  if [ -d "$plugin_path" ] ; then
+    log_detail "$plugin plugin already installed"
+    return 0
+  fi
 
   local tar="/tmp/$plugin-$$.tar.gz"
   local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1)"
@@ -24,11 +28,11 @@ install() {
     mkdir -p "$plugin_path" && \
     (cd "$plugin_path" ; gunzip -c "$tar" | tar xf - --strip-components=1) && \
     rm -f "$tar" && \
-    log "Plugin $plugin installed"
+    log_detail "Plugin $plugin installed"
   ) || return 1
 
   if [ -f "$plugin_path/install.sh" ] ; then
-    log "Running install.sh for $plugin plugin"
+    log_heading "Running install.sh for $plugin plugin"
     "$plugin_path/install.sh"
   fi
 }
