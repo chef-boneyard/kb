@@ -28,7 +28,7 @@ class JrInstaller
   private
 
   def log(msg)
-    puts "-----> #{msg}"
+    puts "       #{msg}"
   end
 
   def download
