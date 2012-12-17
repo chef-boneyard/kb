@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Usage: jr cleanup-suites
+# Summary: Cleans up test suite directories
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+suitepath="$(jr-suitepath)"
+
+if [ -z "$suitepath" ] ; then
+  echo "Suite path is empty, skipping."
+  exit
+elif [ ! -d "$suitepath" ] ; then
+  echo "Suite path directory $suitepath does not exist, skipping."
+  exit
+fi
+
+for dir in "$suitepath/"* ; do
+  if [ -d "$dir" ] ; then
+    echo "       Removing $dir"
+    rm -rf "$dir"
+  fi
+done
