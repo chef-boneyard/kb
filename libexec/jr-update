@@ -24,7 +24,7 @@ for d in plugins suites vendor ; do
   cp -rp $jr_root/$d $tmpdir/
 done ; unset d
 
-echo rm "$jr_root"
+rm -rf "$jr_root"
 mv "$tmpdir" "$jr_root"
 
 log_detail "Upgrade complete to version $(jr-version --bare)"
