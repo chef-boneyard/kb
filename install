@@ -65,6 +65,6 @@ end
 
 if __FILE__ == $0
   JrInstaller.new({
-    :url => ENV["JR_URL"], :tag => ENV["JR_TAG"], :root => ENV["JR_ROOT"]
+    :url => ENV["JR_URL"], :tag => ENV["JR_TAG"], :root => ENV["JR_INSTALL_ROOT"]
   }).run!
 end
