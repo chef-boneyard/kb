@@ -21,7 +21,7 @@ upgrade() {
   local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1 | sed 's/^v//')"
   [ -z "$tag" ] && tag="master"
 
-  if [ "$tag" == "master" ] || [ $(jr-compare-version $current $tag) -lt 0 ] ; then
+  if [ "$tag" == "master" ] || [ $(jr-version-compare $current $tag) -lt 0 ] ; then
     log_detail "Upgrading $plugin to version $tag"
     rm -rf "$plugin_path"
     jr-install "$plugin"
