@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-# Usage: jr version
+# Usage: jr version [--bare]
 # Summary: Displays the version of jr
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-echo "jr v$(cat $(jr-root)/VERSION)"
+if [ "$1" == "--bare" ] ; then
+  echo "$(cat $(jr-root)/VERSION)"
+else
+  echo "jr v$(cat $(jr-root)/VERSION)"
+fi
