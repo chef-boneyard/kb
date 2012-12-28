@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Usage: jr upgrade <plugin>[ <plugin> ...]
+# Summary: Upgrades a plugin
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+log_heading() { echo "-----> $*" ; }
+log_detail()  { echo "       $*" ; }
+warn()        { echo ">>>>>> $*" >&2 ; }
+
+upgrade() {
+  local plugin="$1"
+  local plugin_path="$_JR_ROOT/plugins/$plugin"
+
+  if [ ! -d "$plugin_path" ] ; then
+    log_detail "$plugin plugin is not installed"
+    return 1
+  fi
+
+  local current="$(jr-version --bare)"
+  local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1 | sed 's/^v//')"
+  [ -z "$tag" ] && tag="master"
+
+  if [ "$tag" == "master" ] || [ $(jr-compare-version $current $tag) -lt 0 ] ; then
+    log_detail "Upgrading $plugin to version $tag"
+    rm -rf "$plugin_path"
+    jr-install "$plugin"
+  else
+    log_detail "Skipping $plugin upgrade (current version: $current)"
+  fi
+}
+
+ecode=0
+while [ -n "$1" ] ; do
+  if ! upgrade "$1" ; then
+    warn "Plugin $1 upgrade failed"
+    ecode=1
+  fi
+  shift
+done
+
+exit $ecode

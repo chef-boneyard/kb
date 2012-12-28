@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Usage: jr version-compare <version1> <version2>
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+version1="$1"
+version2="$2"
+
+if [ -z "$version1" ] ; then
+  echo "Version 1 must be specified"
+  exit 1
+elif [ -z "$version2" ] ; then
+  echo "Version 2 must be specified"
+  exit 1
+fi
+
+"$(jr-ruby-binpath)/ruby" -rrubygems -e \
+  "puts Gem::Version.new('$version1') <=> Gem::Version.new('$version2')"
