@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: jr version
+# Summary: Displays the version of jr
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+echo "jr v$(cat $(jr-root)/VERSION)"
