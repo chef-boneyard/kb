@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: jr update
+# Usage: jr update [<version>]
 # Summary: Updates the jr codebase to latest release
 set -e
 [ -n "$JR_DEBUG" ] && set -x
@@ -8,12 +8,16 @@ log_heading() { echo "-----> $*" ; }
 log_detail()  { echo "       $*" ; }
 warn()        { echo ">>>>>> $*" >&2 ; }
 
+version="$1"
 url="https://raw.github.com/jamie-ci/jr/go"
 tmpdir="/tmp/jr-$$"
 script="/tmp/jr-installer-$$"
 jr_root="$(jr-root)"
 
 export JR_INSTALL_ROOT="$tmpdir"
+if [ -n "$version" ] ; then
+  export JR_TAG="$version"
+fi
 
 jr-download $url $script
 jr-ruby "$script"
