@@ -20,6 +20,7 @@ jr-ruby "$script"
 rm -f "$script"
 
 for d in plugins suites vendor ; do
+  [ -e "$jr_root/$d" ] || continue
   cp -rp $jr_root/$d $tmpdir/
 done ; unset d
 
