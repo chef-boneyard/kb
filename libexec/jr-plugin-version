@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: jr plugin-version <plugin> [--bare]
+# Summary: Displays the version of the jr plugin
+set -e
+[ -n "$JR_DEBUG" ] && set -x
+
+plugin="$1"
+version="$(cat $(jr-pluginpath $plugin)/VERSION)"
+
+if [ "$2" == "--bare" ] ; then
+  echo "$version"
+else
+  echo "jr v$version"
+fi

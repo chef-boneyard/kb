@@ -17,7 +17,7 @@ upgrade() {
     return 1
   fi
 
-  local current="$(jr-version --bare)"
+  local current="$(jr-plugin-version $plugin --bare)"
   local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1 | sed 's/^v//')"
   [ -z "$tag" ] && tag="master"
 
