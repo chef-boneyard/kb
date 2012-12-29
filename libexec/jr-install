@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Usage: jr install <plugin>[ <plugin> ...]
 # Summary: Installs a plugin
+# Help: Each <plugin> token can be of the form:
+#
+#   * <name>
+#   * <name>@<tag_version>
+#   * <name>:<tarball_url>
+#
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
@@ -8,8 +14,46 @@ log_heading() { echo "-----> $*" ; }
 log_detail()  { echo "       $*" ; }
 warn()        { echo ">>>>>> $*" >&2 ; }
 
-install() {
+plugin_url() {
   local plugin="$1"
+
+  local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1)"
+  [ -z "$tag" ] && tag="master"
+  echo "https://github.com/jamie-ci/jr-${plugin}/archive/${tag}.tar.gz"
+}
+
+plugin_with_tag_url() {
+  local plugin="$(echo $1 | awk -F'@' '{ print $1 }')"
+  local tag="$(echo $1 | awk -F'@' '{ print $2 }')"
+
+  echo "https://github.com/jamie-ci/jr-${plugin}/archive/${tag}.tar.gz"
+}
+
+plugin_with_url_url() {
+  local plugin="$(echo $1 | awk -F':' '{ print $1 }')"
+  local url="$(echo $1 | sed "s|^$plugin:||")"
+
+  echo "$url"
+}
+
+install() {
+  local token="$1"
+
+  case "$token" in
+    *:*)
+      local plugin="$(echo $1 | awk -F':' '{ print $1 }')"
+      local url="$(plugin_with_url_url $token)"
+      ;;
+    *@*)
+      local plugin="$(echo $1 | awk -F'@' '{ print $1 }')"
+      local url="$(plugin_with_tag_url $token)"
+      ;;
+    *)
+      local plugin="$1"
+      local url="$(plugin_url $token)"
+      ;;
+  esac
+
   local plugin_path="$_JR_ROOT/plugins/$plugin"
 
   if [ -d "$plugin_path" ] ; then
@@ -18,9 +62,6 @@ install() {
   fi
 
   local tar="/tmp/$plugin-$$.tar.gz"
-  local tag="$(jr-ruby -S jr-github-tags jamie-ci jr-$plugin | grep '^v[0-9]' | tail -n 1)"
-  [ -z "$tag" ] && tag="master"
-  local url="https://github.com/jamie-ci/jr-${plugin}/archive/${tag}.tar.gz"
 
   mkdir -p "$(dirname $plugin_path)"
 
