@@ -35,7 +35,7 @@ upgrade_to_specified() {
 
   log_detail "Upgrading $plugin to version $token"
   rm -rf "$(jr-pluginpath $plugin)"
-  jr-install "$plugin"
+  jr-install "$token"
 }
 
 upgrade() {
