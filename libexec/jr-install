@@ -41,15 +41,15 @@ install() {
 
   case "$token" in
     *:*)
-      local plugin="$(echo $1 | awk -F':' '{ print $1 }')"
+      local plugin="$(echo $token | awk -F':' '{ print $1 }')"
       local url="$(plugin_with_url_url $token)"
       ;;
     *@*)
-      local plugin="$(echo $1 | awk -F'@' '{ print $1 }')"
+      local plugin="$(echo $token | awk -F'@' '{ print $1 }')"
       local url="$(plugin_with_tag_url $token)"
       ;;
     *)
-      local plugin="$1"
+      local plugin="$token"
       local url="$(plugin_url $token)"
       ;;
   esac
