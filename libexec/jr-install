@@ -54,7 +54,7 @@ install() {
       ;;
   esac
 
-  local plugin_path="$_JR_ROOT/plugins/$plugin"
+  local plugin_path="$(jr-pluginpath $plugin)"
 
   if [ -d "$plugin_path" ] ; then
     log_detail "$plugin plugin already installed"
@@ -69,7 +69,8 @@ install() {
     mkdir -p "$plugin_path" && \
     (cd "$plugin_path" ; gunzip -c "$tar" | tar xf - --strip-components=1) && \
     rm -f "$tar" && \
-    log_detail "Plugin $plugin installed"
+    local version="$(jr-plugin-version $plugin --bare)"
+    log_detail "Plugin $plugin installed (version $version)"
   ) || return 1
 
   if [ -f "$plugin_path/install.sh" ] ; then
