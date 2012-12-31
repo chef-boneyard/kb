@@ -8,4 +8,4 @@ lint:
 		done
 
 stats:
-	@echo && ruby contrib/stats.rb
+	@echo && ruby contrib/stats.rb 'libexec/**/*'

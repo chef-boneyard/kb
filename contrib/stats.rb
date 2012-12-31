@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+abort "usage: #{File.basename($0)} <file_glob>" if ARGV.first.nil?
+
 Row = Struct.new(:file, :lines, :loc, :comments, :blanks) do
   def c2c
     1.0 * loc / comments
@@ -10,7 +12,7 @@ Row = Struct.new(:file, :lines, :loc, :comments, :blanks) do
   end
 end
 
-rows = Dir.glob("libexec/**/*").map do |f|
+rows = Dir.glob(ARGV.shift).map do |f|
   lines = open(f).readlines.size
   comments = open(f).grep(/^\s*#/).size
   blanks = open(f).grep(/^\s*$/).size
