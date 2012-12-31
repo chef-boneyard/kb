@@ -1,5 +1,7 @@
 # jr
 
+[![Build Status](https://secure.travis-ci.org/jamie-ci/jr.png)](https://travis-ci.org/jamie-ci/jr)
+
 The Jamie Runner (jr) is a test setup and execution framework designed to
 work on remote nodes whose system dependencies cannot be relied upon, except
 for an Omnibus installation of Chef. It uses a plugin architecture to add
