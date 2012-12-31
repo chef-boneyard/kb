@@ -10,5 +10,5 @@ version="$(cat $(jr-pluginpath $plugin)/VERSION)"
 if [ "$2" == "--bare" ] ; then
   echo "$version"
 else
-  echo "jr v$version"
+  echo "jr-$plugin v$version"
 fi
