@@ -1,0 +1,8 @@
+language: ruby
+script: make
+notifications:
+  irc:
+    channels:
+    - "irc.freenode.org#jamie-ci"
+    use_notice: true
+    skip_join: true
