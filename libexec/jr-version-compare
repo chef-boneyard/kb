@@ -3,14 +3,18 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
 version1="$1"
 version2="$2"
 
 if [ -z "$version1" ] ; then
-  echo "Version 1 must be specified"
+  warn "Version 1 must be specified"
   exit 1
 elif [ -z "$version2" ] ; then
-  echo "Version 2 must be specified"
+  warn "Version 2 must be specified"
   exit 1
 fi
 

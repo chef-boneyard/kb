@@ -10,9 +10,9 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-log_heading() { echo "-----> $*" ; }
-log_detail()  { echo "       $*" ; }
-warn()        { echo ">>>>>> $*" >&2 ; }
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
 
 upgrade_to_release() {
   local plugin="$1"
@@ -21,11 +21,11 @@ upgrade_to_release() {
   [ -z "$tag" ] && tag="master"
 
   if [ "$tag" == "master" ] || [ $(jr-version-compare $current $tag) -lt 0 ] ; then
-    log_detail "Upgrading $plugin to version $tag"
+    banner "Upgrading $plugin to version $tag"
     rm -rf "$(jr-pluginpath $plugin)"
     jr-install "$plugin"
   else
-    log_detail "Skipping $plugin upgrade (current version: $current)"
+    info "Skipping $plugin upgrade (current version: $current)"
   fi
 }
 
@@ -33,7 +33,7 @@ upgrade_to_specified() {
   local plugin="$1"
   local token="$2"
 
-  log_detail "Upgrading $plugin to version $token"
+  info "Upgrading $plugin to version $token"
   rm -rf "$(jr-pluginpath $plugin)"
   jr-install "$token"
 }
@@ -59,7 +59,7 @@ upgrade() {
   local plugin_path="$(jr-pluginpath $plugin)"
 
   if [ ! -d "$plugin_path" ] ; then
-    log_detail "$plugin plugin is not installed"
+    info "$plugin plugin is not installed"
     return 1
   elif [ "$flavor" == "bare" ] ; then
     upgrade_to_release $plugin

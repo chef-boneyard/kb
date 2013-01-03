@@ -3,6 +3,10 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
 file="$1"
 md5="$2"
 perms="$3"
@@ -12,7 +16,7 @@ mkdir -p "$(dirname $file)"
 (cat - | jr-decode64 | tee "$file") >/dev/null
 
 if [ "$md5" != "$(jr-md5 $file)" ] ; then
-  echo "Streamed file $file does not match source file md5 ${md5}" >&2
+  warn "Streamed file $file does not match source file md5 ${md5}" >&2
   exit 1
 fi
 

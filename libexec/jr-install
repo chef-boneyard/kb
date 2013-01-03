@@ -10,9 +10,9 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-log_heading() { echo "-----> $*" ; }
-log_detail()  { echo "       $*" ; }
-warn()        { echo ">>>>>> $*" >&2 ; }
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
 
 plugin_url() {
   local plugin="$1"
@@ -57,7 +57,7 @@ install() {
   local plugin_path="$(jr-pluginpath $plugin)"
 
   if [ -d "$plugin_path" ] ; then
-    log_detail "$plugin plugin already installed"
+    info "$plugin plugin already installed"
     return 0
   fi
 
@@ -70,11 +70,11 @@ install() {
     (cd "$plugin_path" ; gunzip -c "$tar" | tar xf - --strip-components=1) && \
     rm -f "$tar" && \
     local version="$(jr-plugin-version $plugin --bare)"
-    log_detail "Plugin $plugin installed (version $version)"
+    info "Plugin $plugin installed (version $version)"
   ) || return 1
 
   if [ -f "$plugin_path/install.sh" ] ; then
-    log_heading "Running install.sh for $plugin plugin"
+    banner "Running install.sh for $plugin plugin"
     "$plugin_path/install.sh"
   fi
 }

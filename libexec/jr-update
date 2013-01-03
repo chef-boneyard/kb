@@ -4,9 +4,9 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-log_heading() { echo "-----> $*" ; }
-log_detail()  { echo "       $*" ; }
-warn()        { echo ">>>>>> $*" >&2 ; }
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
 
 version="$1"
 url="https://raw.github.com/jamie-ci/jr/go"
@@ -31,4 +31,4 @@ done ; unset d
 rm -rf "$jr_root"
 mv "$tmpdir" "$jr_root"
 
-log_detail "Upgrade complete to version $(jr-version --bare)"
+banner "Upgrade complete to version $(jr-version --bare)"

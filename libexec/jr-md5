@@ -4,10 +4,14 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
 file="$1"
 
 if [ ! -f "$file" ] ; then
-  echo "File $file does not exist" >&2
+  warn "File $file does not exist"
   exit 1
 fi
 

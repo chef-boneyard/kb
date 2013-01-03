@@ -3,18 +3,20 @@
 set -e
 [ -n "$JR_DEBUG" ] && set -x
 
-log_detail()  { echo "       $*" ; }
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
 
 plugin="$1"
 prepare_script="$(jr-suitepath $plugin)/prepare.sh"
 prepare_recipe="$(jr-suitepath $plugin)/prepare_recipe.rb"
 
 if [ -x "$prepare_script" ] ; then
-  log_detail "Preparing $plugin suite with $prepare_script"
+  banner "Preparing $plugin suite with $prepare_script"
   "$prepare_script"
 fi
 
 if [ -f "$prepare_recipe" ] ; then
-  log_detail "Preparing $plugin suite with $prepare_recipe"
+  banner "Preparing $plugin suite with $prepare_recipe"
   jr-chef-apply "$prepare_recipe"
 fi
