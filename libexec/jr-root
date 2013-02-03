@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr root
-echo $_JR_ROOT

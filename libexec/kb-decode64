@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: kb decode
+# Summary: Decodes Base64 content on stdin
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+"$(kb-ruby-binpath)/ruby" -rbase64 -e 'puts Base64.decode64(STDIN.read)'

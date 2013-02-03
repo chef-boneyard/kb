@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Usage: kb version-compare <version1> <version2>
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+version1="$1"
+version2="$2"
+
+if [ -z "$version1" ] ; then
+  warn "Version 1 must be specified"
+  exit 1
+elif [ -z "$version2" ] ; then
+  warn "Version 2 must be specified"
+  exit 1
+fi
+
+"$(kb-ruby-binpath)/ruby" -rrubygems -e \
+  "puts Gem::Version.new('$version1') <=> Gem::Version.new('$version2')"

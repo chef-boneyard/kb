@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+# Usage: kb ruby-download <url> <file>
+
+require 'chef/rest'
+require 'chef/platform'
+require 'fileutils'
+
+url, file, splat = ARGV
+
+EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
+  Net::HTTPFatalError, Net::HTTPServerException ]
+
+begin
+  rest = Chef::REST.new(url, nil, nil, {})
+  raw_file = rest.streaming_request(rest.create_url(url), {})
+rescue *EXCEPTIONS => e
+  abort "Could not download from #{url} (#{e.message})"
+end
+
+FileUtils.cp raw_file.path, file
+raw_file.close!

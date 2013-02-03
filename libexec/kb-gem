@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: kb gem command [arguments...] [options...]
+# Summary: Invokes gem command on the embedded Ruby
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+exec "$(kb-ruby-binpath)/gem" $*

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: kb ruby-binpath
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+for r in /opt/{chef,opscode}/embedded/bin ; do
+  if command -v "$r/ruby" >/dev/null ; then
+    echo "$r"
+    exit
+  fi
+done
+
+echo "Ruby binpath could not be found" >&2
+exit 1

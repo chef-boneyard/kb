@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Usage: kb stream-file <path> <md5> <perms>
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+file="$1"
+md5="$2"
+perms="$3"
+
+mkdir -p "$(dirname $file)"
+
+(cat - | kb-decode64 | tee "$file") >/dev/null
+
+if [ "$md5" != "$(kb-md5 $file)" ] ; then
+  warn "Streamed file $file does not match source file md5 ${md5}" >&2
+  exit 1
+fi
+
+chmod "$perms" "$file"

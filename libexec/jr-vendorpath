@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr vendorpath [<product>]
-set -e
-[ -n "$JR_DEBUG" ] && set -x
-
-product="$1"
-echo "$(jr-root)/vendor/$product" | sed 's|/$||'

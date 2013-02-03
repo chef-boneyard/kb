@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: kb test
+# Summary: Runs all test suites
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+for plugin in $(kb-list) ; do
+  banner "Running $plugin test suite"
+  kb-$plugin
+done

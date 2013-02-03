@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Usage: kb root
+echo $_KB_ROOT

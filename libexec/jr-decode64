@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr decode
-# Summary: Decodes Base64 content on stdin
-set -e
-[ -n "$JR_DEBUG" ] && set -x
-
-"$(jr-ruby-binpath)/ruby" -rbase64 -e 'puts Base64.decode64(STDIN.read)'

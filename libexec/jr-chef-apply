@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr chef-apply [<recipe_file>]
-# Summary: Runs Chef recipes from a file or stdin
-set -e
-[ -n "$JR_DEBUG" ] && set -x
-
-exec jr-ruby -S jr-ruby-chef-apply $*
