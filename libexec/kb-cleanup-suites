@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Usage: kb cleanup-suites
+# Summary: Cleans up test suite directories
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+suitepath="$(kb-suitepath)"
+
+if [ -z "$suitepath" ] ; then
+  info "Suite path is empty, skipping."
+  exit
+elif [ ! -d "$suitepath" ] ; then
+  info "Suite path directory $suitepath does not exist, skipping."
+  exit
+fi
+
+for dir in "$suitepath/"* ; do
+  if [ -d "$dir" ] ; then
+    info "Removing $dir"
+    rm -rf "$dir"
+  fi
+done

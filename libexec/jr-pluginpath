@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr pluginpath [<plugin>]
-set -e
-[ -n "$JR_DEBUG" ] && set -x
-
-plugin="$1"
-echo "$(jr-root)/plugins/$plugin" | sed 's|/$||'

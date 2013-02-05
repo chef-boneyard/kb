@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# Usage: kb install <plugin>[ <plugin> ...]
+# Summary: Installs a plugin
+# Help: Each <plugin> token can be of the form:
+#
+#   * <name>
+#   * <name>@<tag_version>
+#   * <name>:<tarball_url>
+#
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+plugin_url() {
+  local plugin="$1"
+
+  local tag="$(kb-ruby -S kb-github-tags jamie-ci kb-$plugin | grep '^v[0-9]' | tail -n 1)"
+  [ -z "$tag" ] && tag="master"
+  echo "https://github.com/jamie-ci/kb-${plugin}/archive/${tag}.tar.gz"
+}
+
+plugin_with_tag_url() {
+  local plugin="$(echo $1 | awk -F'@' '{ print $1 }')"
+  local tag="$(echo $1 | awk -F'@' '{ print $2 }')"
+
+  echo "https://github.com/jamie-ci/kb-${plugin}/archive/${tag}.tar.gz"
+}
+
+plugin_with_url_url() {
+  local plugin="$(echo $1 | awk -F':' '{ print $1 }')"
+  local url="$(echo $1 | sed "s|^$plugin:||")"
+
+  echo "$url"
+}
+
+install() {
+  local token="$1"
+
+  case "$token" in
+    *:*)
+      local plugin="$(echo $token | awk -F':' '{ print $1 }')"
+      local url="$(plugin_with_url_url $token)"
+      ;;
+    *@*)
+      local plugin="$(echo $token | awk -F'@' '{ print $1 }')"
+      local url="$(plugin_with_tag_url $token)"
+      ;;
+    *)
+      local plugin="$token"
+      local url="$(plugin_url $token)"
+      ;;
+  esac
+
+  local plugin_path="$(kb-pluginpath $plugin)"
+
+  if [ -d "$plugin_path" ] ; then
+    info "$plugin plugin already installed"
+    return 0
+  fi
+
+  local tar="/tmp/$plugin-$$.tar.gz"
+
+  mkdir -p "$(dirname $plugin_path)"
+
+  ( kb-download "$url" "$tar" && \
+    mkdir -p "$plugin_path" && \
+    (cd "$plugin_path" ; gunzip -c "$tar" | tar xf - --strip-components=1) && \
+    rm -f "$tar" && \
+    local version="$(kb-plugin-version $plugin --bare)"
+    info "Plugin $plugin installed (version $version)"
+  ) || return 1
+
+  if [ -f "$plugin_path/install.sh" ] ; then
+    banner "Running install.sh for $plugin plugin"
+    "$plugin_path/install.sh"
+  fi
+}
+
+ecode=0
+while [ -n "$1" ] ; do
+  if ! install "$1" ; then
+    warn "Plugin $1 installation failed"
+    ecode=1
+  fi
+  shift
+done
+
+exit $ecode

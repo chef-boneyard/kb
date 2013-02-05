@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Usage: kb md5 <file>
+# Summary: Returns an MD5 digest of a file
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+file="$1"
+
+if [ ! -f "$file" ] ; then
+  warn "File $file does not exist"
+  exit 1
+fi
+
+"$(kb-ruby-binpath)/ruby" -rdigest -e "puts Digest::MD5.hexdigest(IO.read('$file'))"

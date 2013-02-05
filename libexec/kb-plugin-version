@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Usage: kb plugin-version <plugin> [--bare]
+# Summary: Displays the version of the kb plugin
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+plugin="$1"
+version="$(cat $(kb-pluginpath $plugin)/VERSION)"
+
+if [ "$2" == "--bare" ] ; then
+  echo "$version"
+else
+  echo "kb-$plugin v$version"
+fi

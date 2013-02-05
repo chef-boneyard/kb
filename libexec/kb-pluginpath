@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: kb pluginpath [<plugin>]
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+plugin="$1"
+echo "$(kb-root)/plugins/$plugin" | sed 's|/$||'

@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+#
+# Author:: Daniel DeLeo (<dan@kallistec.com>)
+# Author:: Fletcher Nichol (<fnichol@nichol.ca>)
+# Copyright:: Copyright (c) 2012 Daniel DeLeo
+# Copyright:: Copyright (c) 2012 Fletcher Nichol
+# License:: Apache License, Version 2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License."
+
+require 'chef/client'
+require 'chef/providers'
+require 'chef/resources'
+require 'tempfile'
+
+recipe_file = if ARGV.size > 0
+  File.expand_path(ARGV.first)
+else
+  @tempfile = Tempfile.new("recipe")
+  @tempfile.write(ARGF.read)
+  @tempfile.close
+  @tempfile.path
+end
+
+abort "Recipe file #{recipe_file} not found" unless File.exist?(recipe_file)
+
+class Chef::Client
+  attr_reader :events
+end
+
+Chef::Log.level = ENV['KB_LOG_LEVEL'] || :info
+Chef::Config[:solo] = true
+
+client = Chef::Client.new
+client.run_ohai
+client.load_node
+client.build_node
+
+run_context = if client.events.nil?
+  Chef::RunContext.new(client.node, {})
+else
+  Chef::RunContext.new(client.node, {}, client.events)
+end
+
+recipe = Chef::Recipe.new("(chef-apply cookbook)", "(chef-apply recipe)", run_context)
+recipe.from_file(recipe_file)
+
+@tempfile.unlink if @tempfile
+
+runner = Chef::Runner.new(run_context)
+runner.converge

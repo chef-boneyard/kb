@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Usage: kb update [<version>]
+# Summary: Updates the kb codebase to latest release
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+version="$1"
+url="https://raw.github.com/jamie-ci/kb/go"
+tmpdir="/tmp/kb-$$"
+script="/tmp/kb-installer-$$"
+kb_root="$(kb-root)"
+
+export KB_INSTALL_ROOT="$tmpdir"
+if [ -n "$version" ] ; then
+  export KB_TAG="$version"
+fi
+
+kb-download $url $script
+kb-ruby "$script"
+rm -f "$script"
+
+for d in plugins suites vendor ; do
+  [ -e "$kb_root/$d" ] || continue
+  cp -rp $kb_root/$d $tmpdir/
+done ; unset d
+
+rm -rf "$kb_root"
+mv "$tmpdir" "$kb_root"
+
+banner "Upgrade complete to version $(kb-version --bare)"

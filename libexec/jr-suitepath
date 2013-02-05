@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Usage: jr suitepath [<plugin>]
-set -e
-[ -n "$JR_DEBUG" ] && set -x
-
-suite="$1"
-echo "$(jr-root)/suites/$suite" | sed 's|/$||'

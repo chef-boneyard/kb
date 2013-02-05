@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Usage: kb version [--bare]
+# Summary: Displays the version of kb
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+version="$(cat $(kb-root)/VERSION)"
+
+if [ "$1" == "--bare" ] ; then
+  echo "$version"
+else
+  echo "kb v$version"
+fi

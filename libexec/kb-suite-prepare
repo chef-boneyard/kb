@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Usage: kb suite-prepare <plugin>
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+banner()  { echo "-----> $*" ; }
+info()    { echo "       $*" ; }
+warn()    { echo ">>>>>> $*" >&2 ; }
+
+plugin="$1"
+prepare_script="$(kb-suitepath $plugin)/prepare.sh"
+prepare_recipe="$(kb-suitepath $plugin)/prepare_recipe.rb"
+
+if [ -x "$prepare_script" ] ; then
+  banner "Preparing $plugin suite with $prepare_script"
+  "$prepare_script"
+fi
+
+if [ -f "$prepare_recipe" ] ; then
+  banner "Preparing $plugin suite with $prepare_recipe"
+  kb-chef-apply "$prepare_recipe"
+fi

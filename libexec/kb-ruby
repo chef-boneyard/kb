@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Usage: kb ruby [switches] [--] [programfile] [arguments]
+# Summary: Inovkes ruby command on the embedded Ruby
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+ruby_binpath="$(kb-ruby-binpath)"
+export PATH="$ruby_binpath:$PATH"
+exec "$ruby_binpath/ruby" $*

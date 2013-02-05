@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Usage: kb download <url> <file>
+# Summary: Downloads a file from a URL
+set -e
+[ -n "$KB_DEBUG" ] && set -x
+
+url="$1"
+file="$2"
+exec kb-ruby -S kb-ruby-download "$url" "$file"
