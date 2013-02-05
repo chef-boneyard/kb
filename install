@@ -8,20 +8,20 @@ require "tempfile"
 EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
   Net::HTTPFatalError, Net::HTTPServerException ]
 
-class JrInstaller
+class KbInstaller
   def initialize(opts = {})
     @url = opts[:url] || calculate_url(opts[:tag])
-    @root = opts[:root] || "/opt/jr"
-    @tarfile = Tempfile.new("jamie.tar.gz")
+    @root = opts[:root] || "/opt/kb"
+    @tarfile = Tempfile.new("kitchen.tar.gz")
   end
 
   def run!
-    if File.exists?(File.join(@root, "bin/jr"))
-      log "Detected previous jr installation, skipping install"
+    if File.exists?(File.join(@root, "bin/kb"))
+      log "Detected previous kb installation, skipping install"
     else
       download
       install
-      log "jr installed!"
+      log "kb installed!"
     end
   end
 
@@ -32,7 +32,7 @@ class JrInstaller
   end
 
   def download
-    log "Downloading jr from #{@url}"
+    log "Downloading kb from #{@url}"
     rest = Chef::REST.new(@url, nil, nil, {})
     raw_file = rest.streaming_request(rest.create_url(@url), {})
     FileUtils.cp raw_file.path, @tarfile.path
@@ -42,18 +42,18 @@ class JrInstaller
   end
 
   def install
-    log "Installing jr to #{@root}"
+    log "Installing kb to #{@root}"
     FileUtils.mkdir_p @root
     `cd #{@root} && gunzip -c #{@tarfile.path} | tar xf - --strip-components=1`
     @tarfile.unlink
   end
 
   def calculate_url(tag)
-    "https://github.com/jamie-ci/jr/archive/#{tag || latest_tag}.tar.gz"
+    "https://github.com/opscode/kb/archive/#{tag || latest_tag}.tar.gz"
   end
 
   def latest_tag
-    t_url = "https://api.github.com/repos/jamie-ci/jr/git/refs/tags"
+    t_url = "https://api.github.com/repos/opscode/kb/git/refs/tags"
     rest = Chef::REST.new(t_url, nil, nil, {})
     tags = rest.get_rest(t_url, false, {}).map { |t| t["ref"].split("/").last }
     tags.sort.select { |t| t =~ /^v[0-9]/ }.last
@@ -64,7 +64,7 @@ class JrInstaller
 end
 
 if __FILE__ == $0
-  JrInstaller.new({
-    :url => ENV["JR_URL"], :tag => ENV["JR_TAG"], :root => ENV["JR_INSTALL_ROOT"]
+  KbInstaller.new({
+    :url => ENV["KB_URL"], :tag => ENV["KB_TAG"], :root => ENV["KB_INSTALL_ROOT"]
   }).run!
 end
