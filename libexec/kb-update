@@ -9,7 +9,7 @@ info()    { echo "       $*" ; }
 warn()    { echo ">>>>>> $*" >&2 ; }
 
 version="$1"
-url="https://raw.github.com/jamie-ci/kb/go"
+url="https://raw.github.com/opscode/kb/go"
 tmpdir="/tmp/kb-$$"
 script="/tmp/kb-installer-$$"
 kb_root="$(kb-root)"

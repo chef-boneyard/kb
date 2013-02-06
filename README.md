@@ -1,6 +1,6 @@
 # kb
 
-[![Build Status](https://secure.travis-ci.org/jamie-ci/jr.png)](https://travis-ci.org/jamie-ci/jr)
+[![Build Status](https://secure.travis-ci.org/opscode/kb.png)](https://travis-ci.org/opscode/kb)
 
 The Kitchen Busser (kb) is a test setup and execution framework designed to
 work on remote nodes whose system dependencies cannot be relied upon, except
@@ -13,5 +13,5 @@ To install kb without Test Kitchen in a standalone environment, download and
 run its installer:
 
 ```sh
-/opt/chef/embedded/bin/ruby -e "$(curl -fsSkL raw.github.com/jamie-ci/jr/go)"
+/opt/chef/embedded/bin/ruby -e "$(curl -fsSkL raw.github.com/opscode/kb/go)"
 ```

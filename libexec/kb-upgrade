@@ -17,7 +17,7 @@ warn()    { echo ">>>>>> $*" >&2 ; }
 upgrade_to_release() {
   local plugin="$1"
   local current="$(kb-plugin-version $plugin --bare)"
-  local tag="$(kb-ruby -S kb-github-tags jamie-ci kb-$plugin | grep '^v[0-9]' | tail -n 1 | sed 's/^v//')"
+  local tag="$(kb-ruby -S kb-github-tags opscode kb-$plugin | grep '^v[0-9]' | tail -n 1 | sed 's/^v//')"
   [ -z "$tag" ] && tag="master"
 
   if [ "$tag" == "master" ] || [ $(kb-version-compare $current $tag) -lt 0 ] ; then

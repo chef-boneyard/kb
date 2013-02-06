@@ -17,16 +17,16 @@ warn()    { echo ">>>>>> $*" >&2 ; }
 plugin_url() {
   local plugin="$1"
 
-  local tag="$(kb-ruby -S kb-github-tags jamie-ci kb-$plugin | grep '^v[0-9]' | tail -n 1)"
+  local tag="$(kb-ruby -S kb-github-tags opscode kb-$plugin | grep '^v[0-9]' | tail -n 1)"
   [ -z "$tag" ] && tag="master"
-  echo "https://github.com/jamie-ci/kb-${plugin}/archive/${tag}.tar.gz"
+  echo "https://github.com/opscode/kb-${plugin}/archive/${tag}.tar.gz"
 }
 
 plugin_with_tag_url() {
   local plugin="$(echo $1 | awk -F'@' '{ print $1 }')"
   local tag="$(echo $1 | awk -F'@' '{ print $2 }')"
 
-  echo "https://github.com/jamie-ci/kb-${plugin}/archive/${tag}.tar.gz"
+  echo "https://github.com/opscode/kb-${plugin}/archive/${tag}.tar.gz"
 }
 
 plugin_with_url_url() {
