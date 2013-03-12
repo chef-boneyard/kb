@@ -21,6 +21,7 @@
 require 'chef/client'
 require 'chef/providers'
 require 'chef/resources'
+require 'chef/cookbook_version'
 require 'tempfile'
 
 recipe_file = if ARGV.size > 0
@@ -38,6 +39,34 @@ class Chef::Client
   attr_reader :events
 end
 
+# https://github.com/sometimesfood/sandwich/commit/d3540feade873929daaf78312d30a6729eb00bc3
+
+# Chef::CookbookVersion, monkey patched to use simpler file source
+# paths (always uses local files instead of manifest records)
+class Chef::CookbookVersion
+  # Determines the absolute source filename on disk for various file
+  # resources from their relative path
+  #
+  # @param [Chef::Node] node the node object, ignored
+  # @param [Symbol] segment the segment of the current resource, ignored
+  # @param [String] filename the source file path
+  # @param [String] current_filepath the target file path, ignored
+  # @return [String] the preferred source filename
+  def preferred_filename_on_disk_location(node,
+                                          segment,
+                                          filename,
+                                          current_filepath=nil)
+    # keep absolute paths, convert relative paths into absolute paths
+    filename.start_with?('/') ? filename : File.join(Dir.getwd, filename)
+  end
+end
+
+# create a cookbook collection containing a single empty cookbook
+def single_cookbook_collection(cookbook_name)
+  cookbook = Chef::CookbookVersion.new(cookbook_name)
+  Chef::CookbookCollection.new({ cookbook_name => cookbook })
+end
+
 Chef::Log.level = ENV['KB_LOG_LEVEL'] || :info
 Chef::Config[:solo] = true
 
@@ -46,13 +75,17 @@ client.run_ohai
 client.load_node
 client.build_node
 
+cookbook_name   = "(chef-apply cookbook)"
+cookbook_recipe = "(chef-apply recipe)"
+cookbook_collection = single_cookbook_collection(cookbook_name)
+
 run_context = if client.events.nil?
-  Chef::RunContext.new(client.node, {})
+  Chef::RunContext.new(client.node, cookbook_collection)
 else
-  Chef::RunContext.new(client.node, {}, client.events)
+  Chef::RunContext.new(client.node, cookbook_collection, client.events)
 end
 
-recipe = Chef::Recipe.new("(chef-apply cookbook)", "(chef-apply recipe)", run_context)
+recipe = Chef::Recipe.new(cookbook_name, cookbook_recipe, run_context)
 recipe.from_file(recipe_file)
 
 @tempfile.unlink if @tempfile
