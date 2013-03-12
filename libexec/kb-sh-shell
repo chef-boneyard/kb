@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -e
 
-echo $1
+exec $1
