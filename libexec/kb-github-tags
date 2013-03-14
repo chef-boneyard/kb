@@ -4,14 +4,13 @@
 require 'chef/rest'
 
 user, repo, splat = ARGV
-url = "https://api.github.com/repos/#{user}/#{repo}/git/refs/tags"
+url = "http://kbr.nichol.ca/tags/#{user}/#{repo}"
 
 EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
   Net::HTTPFatalError, Net::HTTPServerException ]
 
 begin
-  rest = Chef::REST.new(url, nil, nil, {})
-  puts rest.get_rest(url, false, {}).map { |t| t["ref"].split("/").last }.sort
+  puts Chef::REST.new(url, nil, nil, {}).get_rest(url, false, {})
 rescue *EXCEPTIONS => e
   if e.message == %{404 "Not Found"}
     puts "master"
