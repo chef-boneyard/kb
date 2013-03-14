@@ -53,9 +53,8 @@ class KbInstaller
   end
 
   def latest_tag
-    t_url = "https://api.github.com/repos/opscode/kb/git/refs/tags"
-    rest = Chef::REST.new(t_url, nil, nil, {})
-    tags = rest.get_rest(t_url, false, {}).map { |t| t["ref"].split("/").last }
+    t_url = "http://kbr.nichol.ca/tags/opscode/kb"
+    tags = Chef::REST.new(t_url, nil, nil, {}).get_rest(t_url, false, {})
     tags.sort.select { |t| t =~ /^v[0-9]/ }.last
   rescue *EXCEPTIONS => e
     return "master" if e.message == %{404 "Not Found"}
