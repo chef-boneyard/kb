@@ -4,7 +4,7 @@
 require 'chef/rest'
 
 user, repo, splat = ARGV
-url = "https://kbr.nichol.ca/tags/#{user}/#{repo}"
+url = "http://kbr.nichol.ca/tags/#{user}/#{repo}"
 
 EXCEPTIONS = [ SocketError, Errno::ECONNREFUSED, Timeout::Error,
   Net::HTTPFatalError, Net::HTTPServerException ]
